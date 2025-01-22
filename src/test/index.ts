@@ -1,10 +1,21 @@
-import countDownManager from "..";
+import { countManager } from "..";
 
-const unSubscribe = countDownManager.subScribe((left) => {
+console.log(`${new Date().toJSON()}`);
+const startTime = Date.now();
+countManager.subScribe(({ value, isOver }) => {
+    console.log(`${new Date().toJSON()}: value: ${value}`);
 
-    console.log(`${new Date().toLocaleTimeString()}: left ${left}`);
-
-    if (left <= 0) {
-        unSubscribe();
+    if(isOver){
+        console.log("cost", Date.now() - startTime);
     }
-}, 60 * 1000, 0); 
+
+}, {
+    start: 10 * 1000,
+    end: 58 * 1000,
+    step: 2000,
+    autoUnsubscribe: true,
+    name: "计时哦",
+    isDecrease: false
+}); 
+
+// console.log(countDownManager.getSubscribers());

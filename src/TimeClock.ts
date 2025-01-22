@@ -1,13 +1,19 @@
-import { ICountDownClock, ICountDownClockOptions, Listener } from "./types";
+import { ITimeClock, ITimeClockOptions as ICountClockOptions, Listener } from "./types";
 
-const defaultOptions: ICountDownClockOptions = {
-    interval: 1000
+const defaultOptions: ICountClockOptions = {
+    interval: 100
 }
 
-export default class CountDownClock implements ICountDownClock {
+export class CounClock implements ITimeClock {
 
-    constructor(public options: ICountDownClockOptions = defaultOptions) {
+    constructor(private clockOptions: ICountClockOptions = defaultOptions) {
         this.listeners = [];
+    }
+
+    get options() {
+        return {
+            ...this.clockOptions
+        }
     }
 
     /**
@@ -26,10 +32,9 @@ export default class CountDownClock implements ICountDownClock {
     private ticket: any;
 
     /**
-     * 上次执行时间
+     * 下次计划时间
      */
-    private lastTime: number = 0;
-
+    private nextExecuteTime: number = 0;
 
     /**
      * 删除监听
@@ -78,7 +83,7 @@ export default class CountDownClock implements ICountDownClock {
         if (this.isTiming) {
             return;
         }
-        this.lastTime = Date.now();
+        this.nextExecuteTime = Date.now() + this.options.interval;
         this.isTiming = true;
         this.schedule();
     };
@@ -103,39 +108,43 @@ export default class CountDownClock implements ICountDownClock {
         const now = Date.now();
 
         listeners.forEach(fn => {
-            fn.call(null, now);
+            fn.call(null, {
+                value: now,
+                isOver: false
+            });
         });
-
-        // notify过程中，有可能取消订阅
-        if (!this.isTiming) {
-            return;
-        }
-
-        this.schedule();
     };
 
     /**
      * 计划
      */
     private schedule = () => {
-        const now = Date.now();
         const { interval } = this.options;
 
-        // 下次计时器执行间隔
-        let planWait = interval - (now - this.lastTime);
+        const now = Date.now();
+        let planWait = this.nextExecuteTime - now;
 
         // 当前时间已经超过本次预期执行时间，直接执行，反之，按照修正的计划执行
         if (planWait < 0) {
-            planWait = interval;
-            this.lastTime = Date.now();
+            // console.log(`clock time planWait < 0:  ${new Date().toJSON()}`);
             this.clearTimeout();
+            this.nextExecuteTime += interval;
             this.notify();
+            if (this.isTiming) {
+                this.schedule();
+            }
+            return;
         }
 
+        // console.log(`schedule time :  ${new Date().toJSON()}  planWait: ${planWait}`);
+
         this.ticket = setTimeout(() => {
-            // 记录上一次的时间
-            this.lastTime = Date.now();
+            // console.log(`clock time:  ${new Date().toJSON()}`);
+            this.nextExecuteTime += interval;
             this.notify();
+            if (this.isTiming) {
+                this.schedule();
+            }
         }, planWait);
     };
 

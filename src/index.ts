@@ -1,9 +1,16 @@
-import CountDownClock from "./CountDownClock";
-import CountDownManger from "./CountDownManger";
+import { CounClock } from "./TimeClock";
+import { CountManger } from "./CountManger";
+import { ITimeClockOptions } from "./types";
 
-const clock = new CountDownClock();
-const countDownManager = new CountDownManger(clock);
+export * from "./TimeClock";
+export * from "./CountManger";
 
-export default countDownManager;
+export * from "./default";
+
+export * from "./types"
 
 
+export function createCountDownManger(options: ITimeClockOptions) {
+    const clock = new CounClock(options);
+    return new CountManger(clock)
+}
