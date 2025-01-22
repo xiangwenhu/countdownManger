@@ -1,27 +1,35 @@
-import { CounClock, CountManger } from "..";
+import { CounClock, CountManger, Listener } from "..";
 
 const clock = new CounClock({
     interval: 1000
 });
 const countDownManager = new CountManger(clock);
 
-var un1 = countDownManager.subScribe(({ value }) => {
+const sR = countDownManager.subScribe(function ({ value, isOver }) {
     console.log(`client1: ${new Date().toJSON()}: value ${value}`)
-    // @ts-ignore
-    // un1 && un1();
+    if (isOver) {
+        sR.unSubscribe()
+    }
 }, {
     start: 10 * 1000,
     key: "down1"
 });
+
+
 console.log(`client1: ${new Date().toJSON()}: 订阅完毕`);
 
-let un2 = setTimeout(() => {
-    countDownManager.subScribe(({ value }) => {
+setTimeout(() => {
+    let sR2 = countDownManager.subScribe(({ value, isOver }) => {
 
         console.log(`client2: ${new Date().toJSON()}: value ${value}`)
+
+        if (isOver) {
+            sR2.unSubscribe();
+        }
+
     }, {
         start: 12 * 1000,
-        key: "down1"
+        key: "down2"
     });
 }, 100);
 console.log(`client2: ${new Date().toJSON()}: 订阅完毕`);

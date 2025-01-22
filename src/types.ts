@@ -38,4 +38,10 @@ export interface SubscriberInfo {
 }
 
 
-export type  SubScribeOptions = Partial<Pick<SubscriberInfo, "start" | "end" | "step" | "autoUnsubscribe" | "key" | "name" | "isDecrease">> 
+export type  SubScribeOptions = Partial<Pick<SubscriberInfo, "start" | "end" | "step" | "autoUnsubscribe" | "key" | "name" | "isDecrease">> ;
+
+
+export interface SubScribeResult {
+    unSubscribe: ()=> void;
+    key: string;
+}

@@ -1,4 +1,4 @@
-import { ITimeClock, Listener, SubScribeOptions, SubscriberInfo } from './types';
+import { ITimeClock, Listener, SubScribeOptions, SubScribeResult, SubscriberInfo } from './types';
 import { noop } from './util';
 import uuid from './uuid';
 
@@ -16,7 +16,7 @@ export class CountManger {
      */
     private subscribersMap: Record<string, SubscriberInfo> = {};
 
-    
+
     /**
      * 检查订阅是否解释
      * @param subscribe 
@@ -107,7 +107,7 @@ export class CountManger {
         }
     }
 
-    subScribe(fn: Listener, options: SubScribeOptions = {}): () => void {
+    subScribe(fn: Listener, options: SubScribeOptions = {}): SubScribeResult {
 
         const { key = uuid(), start = 60 * 1000, end = 0, autoUnsubscribe = true, step = 1000, name = '', isDecrease = true } = options;
 
@@ -150,12 +150,15 @@ export class CountManger {
             this.clock.startTiming();
         }
 
-        return () => {
-            this.unSubscribe(fn, key);
+        return {
+            unSubscribe: () => this.unSubscribe(fn, key),
+            key
         };
     }
 
-    private unSubscribe = (fn: Function, key: string) => {
+
+
+    unSubscribe = (fn: Function, key: string) => {
         const c = this.subscribersMap[key];
         if (!c) {
             return;
