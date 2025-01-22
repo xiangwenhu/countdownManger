@@ -148,6 +148,7 @@ export class CountManger {
         // 计时器未计时，开启计时
         if (!this.clock.isTiming) {
             this.clock.startTiming();
+            // Promise.resolve().then(()=> this.clock.startTiming())
         }
 
         return {
