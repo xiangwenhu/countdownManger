@@ -3,7 +3,7 @@ export function createInstance(key: string = 'uuid') {
 
     return function () {
         idx++
-        return `${key}-${idx}|`
+        return `${key}-${idx}`
     }
 }
 

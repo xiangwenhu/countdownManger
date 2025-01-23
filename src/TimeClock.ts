@@ -80,7 +80,7 @@ export class TimeClock implements ITimeClock {
      * 开始计时
      */
     startTiming = () => {
-        if (this.isTiming) {
+        if (this.isTiming || this.listeners.length === 0) {
             return;
         }
         this.nextExecuteTime = Date.now() + this.options.interval;
@@ -155,4 +155,9 @@ export class TimeClock implements ITimeClock {
         if (this.ticket) clearTimeout(this.ticket);
         this.ticket = undefined;
     };
+
+
+     hasListener = (listener: Listener)=> {
+        return  this.listeners.includes(listener);
+    }
 }

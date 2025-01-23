@@ -15,6 +15,7 @@ export interface ITimeClock {
     stopTiming(): void;
     isTiming: boolean;
     options: ITimeClockOptions;
+    hasListener: (listener: Listener) => boolean
 }
 
 
@@ -30,18 +31,62 @@ export interface SubscriberInfo {
      * 下一次的期待值
      */
     nextStepValue: number;
+    /**
+     * 监听函数
+     */
     listeners: Listener[];
+    /**
+     * 计时完毕后是否自动取消订阅
+     */
     autoUnsubscribe: boolean;
     key: string;
+    /**
+     * 名称，统计用
+     */
     name: string;
+    /**
+     * 减少还是增加
+     */
     isDecrease: boolean;
+    /**
+     * 订阅时是否执行监听函数
+     */
+    notifyOnSubscribe: boolean;
+    /**
+     * 是否已经启用
+     */
+    enabled: boolean;
 }
 
 
-export type  SubScribeOptions = Partial<Pick<SubscriberInfo, "start" | "end" | "step" | "autoUnsubscribe" | "key" | "name" | "isDecrease">> ;
+export type SubScribeOptions = Partial<Pick<SubscriberInfo,
+    "start" | "end" | "step" | "autoUnsubscribe" | "key" | "name" | "isDecrease" | "notifyOnSubscribe">
+>;
 
 
 export interface SubScribeResult {
-    unSubscribe: ()=> void;
+    /**
+     * 取消订阅
+     */
+    unSubscribe: () => void;
+    /**
+     * 键
+     */
     key: string;
+    /**
+     * 开始监听
+     */
+    startListening: (force?: boolean) => void;
+    /**
+     * 是否计时结束
+     */
+    isOver: boolean;
+    /**
+     * 是否启用了，即调用了 startListening
+     */
+    enabled: boolean;
+    /**
+     * 是否已经被取消订阅了
+     */
+    isValid: boolean;
 }
