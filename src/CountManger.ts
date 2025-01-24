@@ -1,11 +1,16 @@
 import { DefaultSubscribeOptions } from './const';
-import { ITimeClock, Listener, SubScribeOptions, SubScribeResult, SubscriberInfo } from './types';
-import { noop } from './util';
+import { TimeClock } from './TimeClock';
+import { ITimeClock, ITimeClockOptions, Listener, SubScribeOptions, SubScribeResult, SubscriberInfo } from './types';
+import { isTimeClock, noop } from './util';
 import uuid from './uuid';
 
 export class CountManger {
 
-    constructor(private clock: ITimeClock) { }
+    private clock: ITimeClock;
+
+    constructor(clock: ITimeClock | ITimeClockOptions) {
+        this.clock = isTimeClock(clock) ? clock as ITimeClock : new TimeClock(clock as ITimeClockOptions)
+    }
 
     /**
      * 取消时钟订阅
@@ -34,6 +39,11 @@ export class CountManger {
         return value >= subscriber.end
     }
 
+    /**
+     * 获取下执行的数据信息
+     * @param subscriber 
+     * @returns 
+     */
     private getExecuteInfo(subscriber: SubscriberInfo) {
         const interval = this.clock.options.interval;
         const isDecrease = !!subscriber.isDecrease;
@@ -105,6 +115,7 @@ export class CountManger {
             const oldListeners = [...listeners];
 
             let isOverValue = this.isOver(subscriber);
+            // 清理
             if (isOverValue) this.clearIsOverSubscribe();
             oldListeners.forEach(f => f.call(null, {
                 value: subscriber.value,
@@ -118,6 +129,9 @@ export class CountManger {
         // }
     };
 
+    /**
+     * 清楚结束的且选项未为自动清除的订阅
+     */
     private clearIsOverSubscribe() {
         const subscribers = this.getEnabledSubscribers();
         for (let i = 0; i < subscribers.length; i++) {
@@ -234,11 +248,13 @@ export class CountManger {
         if (!this.clock.hasListener(this.onUpdate)) {
             // 在clock注册
             this.unSubscribeClock = this.clock.subscribe(this.onUpdate);
-            // 计时器未计时，开启计时
-            if (!this.clock.isTiming) {
-                this.clock.startTiming();
-            }
         }
+
+        // 计时器未计时，开启计时
+        if (this.clock.isTiming) {
+            return;
+        }
+        this.clock.startTiming();
     }
 
 
