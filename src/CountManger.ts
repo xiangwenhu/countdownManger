@@ -229,14 +229,24 @@ export class CountManger {
 
             this.subscribersMap.set(key, c);
 
-            if (notifyOnSubscribe) {
-                listener.call(null, {
-                    value,
-                    isOver
-                });
-            }
+
         }
         c.listeners.push(listener);
+        if (notifyOnSubscribe) {
+            listener.call(null, {
+                // 同key的，不能取当前值
+                value: this.getSubScribeValue(key) || value,
+                isOver
+            });
+        }
+    }
+
+    private getSubScribeValue = (key: string) => {
+        const subScribeInfo = this.getSubscriber(key);
+        if (!subScribeInfo) return undefined;
+        const listeners = subScribeInfo.listeners;
+        if (listeners.length === 0) return undefined;
+        if (listeners.length === 1) return subScribeInfo.value;
     }
 
 
