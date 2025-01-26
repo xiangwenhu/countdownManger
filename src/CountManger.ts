@@ -233,9 +233,10 @@ export class CountManger {
         }
         c.listeners.push(listener);
         if (notifyOnSubscribe) {
+            const val = this.getSubScribeValue(key) || value;
             listener.call(null, {
                 // 同key的，不能取当前值
-                value: this.getSubScribeValue(key) || value,
+                value: val,
                 isOver
             });
         }
@@ -246,7 +247,8 @@ export class CountManger {
         if (!subScribeInfo) return undefined;
         const listeners = subScribeInfo.listeners;
         if (listeners.length === 0) return undefined;
-        if (listeners.length === 1) return subScribeInfo.value;
+        // 一个以上
+        if (listeners.length >= 1) return subScribeInfo.value;
     }
 
 
