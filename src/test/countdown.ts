@@ -9,7 +9,6 @@ const subScriber = countManager.subScribe(({ value, isOver }) => {
 
     if(isOver){
         console.log(`${new Date().toJSON()}: cost:`, Date.now() - startTime);
-        subScriber.startListening();
     }
 }, {
     start: 10 * 1000,
