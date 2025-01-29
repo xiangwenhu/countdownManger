@@ -11,17 +11,19 @@ console.log(`${new Date().toJSON()}: 开始订阅`);
 const subScriber = countManager.subScribe(({ value, isOver }) => {
     console.log(`${new Date().toJSON()}: value: ${value}`);
 
-    if(isOver){
+    if (isOver) {
         console.log(`${new Date().toJSON()}: cost:`, Date.now() - startTime);
     }
 }, {
     start: 10 * 1000,
     end: 0 * 1000,
     step: 100,
-    clockFactor: 0.1,
+    clockFactor(s) {
+        return 0.1
+    },
     autoUnsubscribe: true,
     name: "计时哦",
     notifyOnSubscribe: false
-}); 
+});
 
 subScriber.startListening();

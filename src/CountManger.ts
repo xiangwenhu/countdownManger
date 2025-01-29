@@ -39,13 +39,31 @@ export class CountManger {
         return value >= subscriber.end
     }
 
+    private getClockStepValue = (subscriber: SubscriberInfo) => {
+
+        const interval = this.clock.options.interval;
+
+        let clockFactor: number = 1;
+
+        if (typeof subscriber.clockFactor === "number")
+            clockFactor = subscriber.clockFactor;
+
+        if (typeof subscriber.clockFactor === "function") {
+            const factor = subscriber.clockFactor.call({ ...subscriber }, interval);
+            if (typeof factor === "number")
+                clockFactor = factor
+        }
+
+        return Math.ceil(clockFactor * interval)
+    }
+
     /**
      * 获取下执行的数据信息
      * @param subscriber 
      * @returns 
      */
     private getExecuteInfo(subscriber: SubscriberInfo) {
-        const  clockStepValue = Math.ceil(this.clock.options.interval * subscriber.clockFactor);
+        const clockStepValue = this.getClockStepValue(subscriber);
         const isDecrease = !!subscriber.isDecrease;
         const { value: oldValue, nextStepValue, step } = subscriber;
 
