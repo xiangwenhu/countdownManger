@@ -56,11 +56,15 @@ export interface SubscriberInfo {
      * 是否已经启用
      */
     enabled: boolean;
+    /**
+     * 时钟因子，默认是1，即每次的值变更大小为  clockFactor* clock.interval 
+     */
+    clockFactor: number;    
 }
 
 
 export type SubScribeOptions = Partial<Pick<SubscriberInfo,
-    "start" | "end" | "step" | "autoUnsubscribe" | "key" | "name" | "isDecrease" | "notifyOnSubscribe">
+    "start" | "end" | "step" | "autoUnsubscribe" | "key" | "name" | "isDecrease" | "notifyOnSubscribe"  | "clockFactor">
 >;
 
 
