@@ -139,7 +139,7 @@ export class TimeClock implements ITimeClock {
         // console.log(`schedule time :  ${new Date().toJSON()}  planWait: ${planWait}`);
 
         this.ticket = setTimeout(() => {
-            console.log(`clock time:  ${new Date().toJSON()}`);
+            // console.log(`clock time:  ${new Date().toJSON()}`);
             this.nextExecuteTime += interval;
             this.notify();
             if (this.isTiming) {

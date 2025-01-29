@@ -39,11 +39,11 @@ export class CountManger {
         return value >= subscriber.end
     }
 
-    private getClockStepValue = (subscriber: SubscriberInfo) => {
+    private getClockFactor = (subscriber: SubscriberInfo) => {
 
         const interval = this.clock.options.interval;
 
-        let clockFactor: number = 1;
+        let clockFactor: number = interval;
 
         if (typeof subscriber.clockFactor === "number")
             clockFactor = subscriber.clockFactor;
@@ -54,7 +54,7 @@ export class CountManger {
                 clockFactor = factor
         }
 
-        return Math.ceil(clockFactor * interval)
+        return Math.ceil(clockFactor)
     }
 
     /**
@@ -63,7 +63,7 @@ export class CountManger {
      * @returns 
      */
     private getExecuteInfo(subscriber: SubscriberInfo) {
-        const clockStepValue = this.getClockStepValue(subscriber);
+        const clockStepValue = this.getClockFactor(subscriber);
         const isDecrease = !!subscriber.isDecrease;
         const { value: oldValue, nextStepValue, step } = subscriber;
 
