@@ -11,11 +11,12 @@ const subScriber = countManager.subScribe(({ value, isOver }) => {
         console.log(`${new Date().toJSON()}: cost:`, Date.now() - startTime);
     }
 }, {
-    start: 5 * 1000,
-    end: 0 * 1000,
+    start: 0 * 1000,
+    end: 5 * 1000,
     autoUnsubscribe: true,
     name: "计时哦",
-    notifyOnSubscribe: true
+    notifyOnSubscribe: true,
+    isDecrease: false
 }); 
 
 subScriber.startListening();

@@ -63,7 +63,7 @@ export class CountManger {
      * @returns 
      */
     private getExecuteInfo(subscriber: SubscriberInfo) {
-        const clockStepValue = this.getClockFactor(subscriber);
+        const clockFactor = this.getClockFactor(subscriber);
         const isDecrease = !!subscriber.isDecrease;
         const { value: oldValue, nextStepValue, step } = subscriber;
 
@@ -71,7 +71,7 @@ export class CountManger {
 
         //  end < value < start
         if (isDecrease) {
-            const newValue = subscriber.value - clockStepValue;
+            const newValue = subscriber.value - clockFactor;
             return {
                 isOver,
                 oldValue: oldValue,
@@ -83,7 +83,7 @@ export class CountManger {
         }
 
         // start < value < end
-        const newValue = subscriber.value + clockStepValue;
+        const newValue = subscriber.value + clockFactor;
         return {
             isOver,
             oldValue: oldValue,
@@ -223,7 +223,7 @@ export class CountManger {
             name = '',
             isDecrease = true,
             notifyOnSubscribe = true,
-            clockFactor = 1
+            clockFactor = this.clock.options.interval
         } = Object.assign({}, DefaultSubscribeOptions, options);
 
         let c: SubscriberInfo | undefined = this.subscribersMap.get(key);

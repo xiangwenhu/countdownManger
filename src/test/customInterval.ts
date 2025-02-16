@@ -1,4 +1,4 @@
-import { TimeClock, CountManger } from "../"
+import { CountManger } from "../"
 
 const cm = new CountManger({
     interval: 100

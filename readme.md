@@ -14,9 +14,22 @@ npm install count-manger
 https://xiangwenhu.github.io/count-manager-demos/#/
 
 
+
+## 特点
+1. CountManager支持多实例，比如常见的验证码计时， 1000ms为间隔。
+2. 支持自定义时钟周期。
+3. 会根据当前时间和下一次预计时间点，通过setTimeout动态调整执行计划，确保计时尽可能准确。
+4. 支持倒计时，也支持正向计时。
+5. 支持统计运行中的计时器。
+   
+   
+## 结构图
+![](https://github.com/xiangwenhu/countdownManger/blob/main/assets/images/strcut.png?raw=true)
+
+
 ## 示例
 
-### 正常的倒计时
+### 正常的倒计数
 ```typescript
 import { countManager } from "..";
 
@@ -29,31 +42,63 @@ const subScriber = countManager.subScribe(({ value, isOver }) => {
 
     if(isOver){
         console.log(`${new Date().toJSON()}: cost:`, Date.now() - startTime);
-        subScriber.startListening();
     }
 }, {
-    start: 10 * 1000,
+    start: 5 * 1000,
     end: 0 * 1000,
     autoUnsubscribe: true,
     name: "计时哦",
-    notifyOnSubscribe: false
+    notifyOnSubscribe: true
 }); 
 
 subScriber.startListening();
 
 // 输出：
-// 2025-01-26T13:32:46.278Z: 开始订阅
-// 2025-01-26T13:32:47.288Z: value: 9000
-// 2025-01-26T13:32:48.284Z: value: 8000
-// 2025-01-26T13:32:49.280Z: value: 7000
-// 2025-01-26T13:32:50.283Z: value: 6000
-// 2025-01-26T13:32:51.294Z: value: 5000
-// 2025-01-26T13:32:52.290Z: value: 4000
-// 2025-01-26T13:32:53.293Z: value: 3000
-// 2025-01-26T13:32:54.287Z: value: 2000
-// 2025-01-26T13:32:55.290Z: value: 1000
-// 2025-01-26T13:32:56.285Z: value: 0
-// 2025-01-26T13:32:56.286Z: cost: 10008
+// 2025-02-16T13:59:39.515Z: 开始订阅
+// 2025-02-16T13:59:39.518Z: value: 5000
+// 2025-02-16T13:59:40.528Z: value: 4000
+// 2025-02-16T13:59:41.528Z: value: 3000
+// 2025-02-16T13:59:42.528Z: value: 2000
+// 2025-02-16T13:59:43.533Z: value: 1000
+// 2025-02-16T13:59:44.532Z: value: 0
+// 2025-02-16T13:59:44.533Z: cost: 5018
+
+```
+
+### 增长计数
+```typescript
+import { countManager } from "..";
+
+const startTime = Date.now();
+
+console.log(`${new Date().toJSON()}: 开始订阅`);
+
+const subScriber = countManager.subScribe(({ value, isOver }) => {
+    console.log(`${new Date().toJSON()}: value: ${value}`);
+
+    if(isOver){
+        console.log(`${new Date().toJSON()}: cost:`, Date.now() - startTime);
+    }
+}, {
+    start: 0 * 1000,
+    end: 5 * 1000,
+    autoUnsubscribe: true,
+    name: "计时哦",
+    notifyOnSubscribe: true,
+    isDecrease: false
+}); 
+
+subScriber.startListening();
+
+// 输出
+// 2025-02-16T14:03:15.449Z: 开始订阅
+// 2025-02-16T14:03:15.452Z: value: 0
+// 2025-02-16T14:03:16.464Z: value: 1000
+// 2025-02-16T14:03:17.456Z: value: 2000
+// 2025-02-16T14:03:18.462Z: value: 3000
+// 2025-02-16T14:03:19.463Z: value: 4000
+// 2025-02-16T14:03:20.460Z: value: 5000
+// 2025-02-16T14:03:20.460Z: cost: 5011
 
 ```
 
@@ -175,13 +220,39 @@ let subScriber3 = countManager.subScribe(({ value, isOver }) => {
 // ]
 ```
 
+### 自定义时钟周期
+```typescript
+import { CountManger } from "../"
 
-## 结构图
-![](./assets/images/strcut.png)
+const cm = new CountManger({
+    interval: 100
+});
+
+const startTime = Date.now();
+
+const subscriber = cm.subScribe(function ({ value, isOver }) {
+    console.log(`${new Date().toJSON()}: ${value}`);
+    if (isOver) {
+        console.log(`${new Date().toJSON()}: cost:`, Date.now() - startTime);
+    }
+}, {
+    start: 500,
+    step: 100
+});
+
+subscriber.startListening();
+
+// 输出
+// 2025-02-16T14:07:09.527Z: 500
+// 2025-02-16T14:07:09.633Z: 400
+// 2025-02-16T14:07:09.737Z: 300
+// 2025-02-16T14:07:09.834Z: 200
+// 2025-02-16T14:07:09.929Z: 100
+// 2025-02-16T14:07:10.036Z: 0
+// 2025-02-16T14:07:10.036Z: cost: 510
 
 
-## 特点
-1. CountManager支持多实例，比如常见的验证码计时， 1000ms为间隔。
-2. 会根据当前时间和下一次预计时间点，通过setTimeout动态调整执行计划，确保计时尽可能准确。
-3. 支持倒计时，也支持正向计时。
-4. 支持统计运行中的计时器
+```
+
+
+

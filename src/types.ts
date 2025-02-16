@@ -57,7 +57,7 @@ export interface SubscriberInfo {
      */
     enabled: boolean;
     /**
-     * 时钟因子，默认是1，即每次的值变更大小为  clockFactor* clock.interval 
+     * 时钟因子，默认是1000，即每次的值变更大小
      */
     clockFactor: number | ((this: SubscriberInfo, clockInterval: number) => number);
 }

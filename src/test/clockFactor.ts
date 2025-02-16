@@ -17,9 +17,9 @@ const subScriber = countManager.subScribe(({ value, isOver }) => {
 }, {
     start: 10 * 1000,
     end: 0 * 1000,
-    step: 10,
+    step: 100,
     clockFactor(s) {
-        return s/10
+        return s / 10
     },
     autoUnsubscribe: true,
     name: "计时哦",
