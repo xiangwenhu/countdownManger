@@ -1,16 +1,29 @@
 {
-  "name": "countdown-manger",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "count-manger",
+  "version": "0.0.2",
+  "main": "dist/index.js",
+  "types": "./dist/index.d.ts",
+  "typing": "./dist/index.d.ts",
+  "author": "xiangwen hu",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "pack": "npm run build && npm pack",
+    "pub": "npm run build && npm publish"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
-  }
+  },
+  "contributors": [
+    "xiangwenhu (https://github.com/xiangwenhu)"
+  ],
+  "keywords": [
+    "countdown",
+    "Verification Code",
+    "Timer",
+    "Timeout",
+    "setTimeout"
+  ]
 }

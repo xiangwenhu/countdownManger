@@ -1,8 +1,13 @@
 import { countManager } from "..";
 
 console.log(`subScriber1: ${new Date().toJSON()}: 开始订阅`);
+const startTime = Date.now();
 const subScriber1 = countManager.subScribe(function ({ value, isOver }) {
     console.log(`subScriber1: ${new Date().toJSON()}: value ${value}`)
+
+    if (isOver) {
+        console.log(`${new Date().toJSON()}: cost:`, Date.now() - startTime);
+    }
 }, {
     start: 5 * 1000,
     key: "down1"
@@ -17,5 +22,4 @@ setTimeout(() => {
         start: 10 * 1000,
         key: "down1"
     });
-    // subScriber2.startListening();
 }, 800);

@@ -1,11 +1,16 @@
 import { DefaultSubscribeOptions } from './const';
-import { ITimeClock, Listener, SubScribeOptions, SubScribeResult, SubscriberInfo } from './types';
-import { noop } from './util';
+import { TimeClock } from './TimeClock';
+import { ITimeClock, ITimeClockOptions, Listener, SubScribeOptions, SubScribeResult, SubscriberInfo } from './types';
+import { isTimeClock, noop } from './util';
 import uuid from './uuid';
 
 export class CountManger {
 
-    constructor(private clock: ITimeClock) { }
+    private clock: ITimeClock;
+
+    constructor(clock: ITimeClock | ITimeClockOptions) {
+        this.clock = isTimeClock(clock) ? clock as ITimeClock : new TimeClock(clock as ITimeClockOptions)
+    }
 
     /**
      * 取消时钟订阅
@@ -34,8 +39,31 @@ export class CountManger {
         return value >= subscriber.end
     }
 
-    private getExecuteInfo(subscriber: SubscriberInfo) {
+    private getClockFactor = (subscriber: SubscriberInfo) => {
+
         const interval = this.clock.options.interval;
+
+        let clockFactor: number = interval;
+
+        if (typeof subscriber.clockFactor === "number")
+            clockFactor = subscriber.clockFactor;
+
+        if (typeof subscriber.clockFactor === "function") {
+            const factor = subscriber.clockFactor.call({ ...subscriber }, interval);
+            if (typeof factor === "number")
+                clockFactor = factor
+        }
+
+        return Math.ceil(clockFactor)
+    }
+
+    /**
+     * 获取下执行的数据信息
+     * @param subscriber 
+     * @returns 
+     */
+    private getExecuteInfo(subscriber: SubscriberInfo) {
+        const clockFactor = this.getClockFactor(subscriber);
         const isDecrease = !!subscriber.isDecrease;
         const { value: oldValue, nextStepValue, step } = subscriber;
 
@@ -43,7 +71,7 @@ export class CountManger {
 
         //  end < value < start
         if (isDecrease) {
-            const newValue = subscriber.value - interval;
+            const newValue = subscriber.value - clockFactor;
             return {
                 isOver,
                 oldValue: oldValue,
@@ -55,7 +83,7 @@ export class CountManger {
         }
 
         // start < value < end
-        const newValue = subscriber.value + interval;
+        const newValue = subscriber.value + clockFactor;
         return {
             isOver,
             oldValue: oldValue,
@@ -105,6 +133,7 @@ export class CountManger {
             const oldListeners = [...listeners];
 
             let isOverValue = this.isOver(subscriber);
+            // 清理
             if (isOverValue) this.clearIsOverSubscribe();
             oldListeners.forEach(f => f.call(null, {
                 value: subscriber.value,
@@ -118,6 +147,9 @@ export class CountManger {
         // }
     };
 
+    /**
+     * 清楚结束的且选项未为自动清除的订阅
+     */
     private clearIsOverSubscribe() {
         const subscribers = this.getEnabledSubscribers();
         for (let i = 0; i < subscribers.length; i++) {
@@ -190,7 +222,8 @@ export class CountManger {
             step = 1000,
             name = '',
             isDecrease = true,
-            notifyOnSubscribe = true
+            notifyOnSubscribe = true,
+            clockFactor = this.clock.options.interval
         } = Object.assign({}, DefaultSubscribeOptions, options);
 
         let c: SubscriberInfo | undefined = this.subscribersMap.get(key);
@@ -211,18 +244,28 @@ export class CountManger {
                 isDecrease,
                 notifyOnSubscribe,
                 enabled: false,
+                clockFactor
             };
-
             this.subscribersMap.set(key, c);
-
-            if (notifyOnSubscribe) {
-                listener.call(null, {
-                    value,
-                    isOver
-                });
-            }
         }
         c.listeners.push(listener);
+        if (notifyOnSubscribe) {
+            const val = this.getSubScribeValue(key) || value;
+            listener.call(null, {
+                // 同key的，不能取当前值
+                value: val,
+                isOver
+            });
+        }
+    }
+
+    private getSubScribeValue = (key: string) => {
+        const subScribeInfo = this.getSubscriber(key);
+        if (!subScribeInfo) return undefined;
+        const listeners = subScribeInfo.listeners;
+        if (listeners.length === 0) return undefined;
+        // 一个以上
+        if (listeners.length >= 1) return subScribeInfo.value;
     }
 
 
@@ -234,11 +277,13 @@ export class CountManger {
         if (!this.clock.hasListener(this.onUpdate)) {
             // 在clock注册
             this.unSubscribeClock = this.clock.subscribe(this.onUpdate);
-            // 计时器未计时，开启计时
-            if (!this.clock.isTiming) {
-                this.clock.startTiming();
-            }
         }
+
+        // 计时器未计时，开启计时
+        if (this.clock.isTiming) {
+            return;
+        }
+        this.clock.startTiming();
     }
 
 

@@ -1,12 +1,12 @@
-import { ITimeClock, ITimeClockOptions as ICountClockOptions, Listener } from "./types";
+import { ITimeClock, ITimeClockOptions, Listener } from "./types";
 
-const defaultOptions: ICountClockOptions = {
+const defaultOptions: ITimeClockOptions = {
     interval: 1000
 }
 
 export class TimeClock implements ITimeClock {
 
-    constructor(private clockOptions: ICountClockOptions = defaultOptions) {
+    constructor(private clockOptions: ITimeClockOptions = defaultOptions) {
         this.listeners = [];
     }
 
