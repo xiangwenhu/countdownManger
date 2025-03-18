@@ -6,16 +6,23 @@ const countManager = new CountManger({
 
 const startTime = Date.now();
 
+let lastTime = startTime;
+
 console.log(`${new Date().toJSON()}: 开始订阅`);
 
 const subScriber = countManager.subScribe(({ value, isOver }) => {
-    console.log(`${new Date().toJSON()}: value: ${value}`);
+
+    const now = Date.now();
+
+    console.log(`${new Date().toJSON()}: value: ${value}, cost: `, now - lastTime);
 
     if (isOver) {
-        console.log(`${new Date().toJSON()}: cost:`, Date.now() - startTime);
+        console.log(`${new Date().toJSON()}: total cost:`, now - startTime);
     }
+    lastTime = now;
+
 }, {
-    start: 10 * 1000,
+    start: 1* 1000,
     end: 0 * 1000,
     step: 100,
     clockFactor(s) {

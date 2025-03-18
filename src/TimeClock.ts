@@ -76,6 +76,10 @@ export class TimeClock implements ITimeClock {
         }
     };
 
+    get now() {
+        return performance.now();
+    }
+
     /**
      * 开始计时
      */
@@ -83,7 +87,7 @@ export class TimeClock implements ITimeClock {
         if (this.isTiming || this.listeners.length === 0) {
             return;
         }
-        this.nextExecuteTime = Date.now() + this.options.interval;
+        this.nextExecuteTime = this.now + this.options.interval;
         this.isTiming = true;
         this.schedule();
     };
@@ -105,7 +109,7 @@ export class TimeClock implements ITimeClock {
         }
 
         const { listeners } = this;
-        const now = Date.now();
+        const now = this.now;
 
         listeners.forEach(fn => {
             fn.call(null, {
@@ -121,7 +125,7 @@ export class TimeClock implements ITimeClock {
     private schedule = () => {
         const { interval } = this.options;
 
-        const now = Date.now();
+        const now = performance.now();
         let planWait = this.nextExecuteTime - now;
 
         // 当前时间已经超过本次预期执行时间，直接执行，反之，按照修正的计划执行
@@ -157,7 +161,7 @@ export class TimeClock implements ITimeClock {
     };
 
 
-     hasListener = (listener: Listener)=> {
-        return  this.listeners.includes(listener);
+    hasListener = (listener: Listener) => {
+        return this.listeners.includes(listener);
     }
 }

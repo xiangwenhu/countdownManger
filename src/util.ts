@@ -21,5 +21,4 @@ export function isTimeClock(obj: any) {
     return isFunction(obj.subscribe) && isFunction(obj.unSubscribe)
         && isFunction(obj.startTiming) && isFunction(obj.stopTiming)
         && hasown(obj, "isTiming") && hasown(obj, "hasListener")
-
 }
