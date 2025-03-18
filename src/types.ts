@@ -1,27 +1,74 @@
-export type Listener = (data: {
-    value: number;
-    isOver: boolean
-}) => void;
 
-
+/**
+ * 时钟选项
+ */
 export interface ITimeClockOptions {
+    /**
+     * 时钟间隔
+     */
     interval: number;
 }
 
+
+export type Listener = (data: {
+    /**
+     * 值
+     */
+    value: number;
+    /**
+     * 是否结束
+     */
+    isOver: boolean
+}) => void;
+
 export interface ITimeClock {
+    /**
+     * 定义
+     * @param fn
+     */
     subscribe(fn: Listener): () => void;
+    /**
+     * 取消订阅
+     * @param fn 
+     */
     unSubscribe(fn: Listener): any;
+    /**
+     * 开始计时
+     */
     startTiming(): void;
+    /**
+     * 结束计时
+     */
     stopTiming(): void;
+    /**
+     * 是否在计时
+     */
     isTiming: boolean;
+    /**
+     * 始终选项
+     */
     options: ITimeClockOptions;
+    /**
+     * 是否有监听函数
+     * @param listener 
+     * @returns 
+     */
     hasListener: (listener: Listener) => boolean
 }
 
 
 export interface SubscriberInfo {
+    /**
+     * 起始值
+     */
     start: number;
+    /**
+     * 步距
+     */
     step: number;
+    /**
+     * 结束值
+     */
     end: number;
     /**
      * 当前值

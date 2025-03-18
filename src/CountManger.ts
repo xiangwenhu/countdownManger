@@ -8,7 +8,9 @@ export class CountManger {
 
     private clock: ITimeClock;
 
-    constructor(clock: ITimeClock | ITimeClockOptions) {
+    constructor(clock: ITimeClock | ITimeClockOptions = {
+        interval: 1000
+    }) {
         this.clock = isTimeClock(clock) ? clock as ITimeClock : new TimeClock(clock as ITimeClockOptions)
     }
 
@@ -148,7 +150,7 @@ export class CountManger {
     };
 
     /**
-     * 清楚结束的且选项未为自动清除的订阅
+     *清除结束的且选项未为自动清除的订阅
      */
     private clearIsOverSubscribe() {
         const subscribers = this.getEnabledSubscribers();
