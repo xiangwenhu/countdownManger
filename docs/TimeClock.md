@@ -1,15 +1,15 @@
 # TimeClock
-计时的时钟。有CountManager关联时，就一直运行，没有会自动停止运行。
+计时的时钟。有 Counter关联时，就一直运行，没有会自动停止运行。
 
 示例： 
 ```typescript
-import { CountManger, TimeClock } from "../"
+import { Counter, TimeClock } from "../"
 // 创建时钟
 const clock = new TimeClock({
     interval: 100
 });
 
-const cm = new CountManger(clock);
+const cm = new Counter(clock);
 
 const startTime = Date.now();
 
@@ -29,7 +29,7 @@ subscriber.startListening();
 ## 构造函数
 语法：  
 ```typescript
-const clock = new CountManger(options?: ITimeClockOptions);
+const clock = new Counter(options?: ITimeClockOptions);
 ```
 
 **ITimeClockOptions**  的类型申明如下

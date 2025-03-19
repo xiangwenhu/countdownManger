@@ -4,7 +4,7 @@ import { ITimeClock, ITimeClockOptions, Listener, SubScribeOptions, SubScribeRes
 import { isTimeClock, noop } from './util';
 import uuid from './uuid';
 
-export class CountManger {
+export class Counter {
 
     private clock: ITimeClock;
 
@@ -41,7 +41,7 @@ export class CountManger {
         return value >= subscriber.end
     }
 
-    private getClockFactor = (subscriber: SubscriberInfo) => {
+    private getClockFactorValue = (subscriber: SubscriberInfo) => {
 
         const interval = this.clock.options.interval;
 
@@ -67,7 +67,7 @@ export class CountManger {
      * @returns 
      */
     private getExecuteInfo(subscriber: SubscriberInfo) {
-        const clockFactor = this.getClockFactor(subscriber);
+        const clockFactorValue = this.getClockFactorValue(subscriber);
         const isDecrease = !!subscriber.isDecrease;
         const { value: oldValue, nextStepValue, step } = subscriber;
 
@@ -75,25 +75,27 @@ export class CountManger {
 
         //  end < value < start
         if (isDecrease) {
-            const newValue = subscriber.value - clockFactor;
+            const newValue = subscriber.value - clockFactorValue;
             return {
                 isOver,
                 oldValue: oldValue,
                 newValue: newValue,
                 // 旧的值大于 下一次期待值，新值小于等于下一次期待值
-                executable: oldValue > subscriber.nextStepValue && newValue <= subscriber.nextStepValue,
+                // executable: oldValue > subscriber.nextStepValue && newValue <= subscriber.nextStepValue,
+                executable: newValue <= subscriber.nextStepValue,
                 nextStepValue: nextStepValue - step
             }
         }
 
         // start < value < end
-        const newValue = subscriber.value + clockFactor;
+        const newValue = subscriber.value + clockFactorValue;
         return {
             isOver,
             oldValue: oldValue,
             newValue: newValue,
             // 旧的值小于 下一次期待值，新值大于等于下一次期待值
-            executable: oldValue < subscriber.nextStepValue && newValue >= subscriber.nextStepValue,
+            // executable: oldValue < subscriber.nextStepValue && newValue >= subscriber.nextStepValue,
+            executable: newValue >= subscriber.nextStepValue,
             nextStepValue: nextStepValue + step
         }
 

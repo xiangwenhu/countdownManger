@@ -1,6 +1,6 @@
-import { CountManger } from "..";
+import { Counter } from "..";
 
-const countManager = new CountManger({
+const counter = new Counter({
     interval: 100
 })
 
@@ -10,7 +10,7 @@ let lastTime = startTime;
 
 console.log(`${new Date().toJSON()}: 开始订阅`);
 
-const subScriber = countManager.subScribe(({ value, isOver }) => {
+const subScriber = counter.subScribe(({ value, isOver }) => {
 
     const now = Date.now();
 
@@ -22,11 +22,16 @@ const subScriber = countManager.subScribe(({ value, isOver }) => {
     lastTime = now;
 
 }, {
-    start: 1* 1000,
+    start: 60 * 1000,
     end: 0 * 1000,
     step: 100,
+    /**
+     * 时钟每次执行值变化的数值
+     * 如果变化数值直大于等于step的值，会立即会调用订阅函数
+     * 如果变化的数值小于step的值，当多次累计变化的值大于等于step时，会调用订阅函数
+     */
     clockFactor(s) {
-        return s / 10
+        return  1000
     },
     autoUnsubscribe: true,
     name: "计时哦",

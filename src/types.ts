@@ -1,4 +1,3 @@
-
 /**
  * 时钟选项
  */
@@ -91,7 +90,9 @@ interface SubScribeFullOptions {
      */
     notifyOnSubscribe: boolean;
     /**
-     * 时钟因子，默认是1000，即每次的值变更大小
+     * 时钟因子，即每次时钟执行的值变化的大小， 默认值等于时钟的interval
+     * 如果变化数值直大于等于step的值，会立即会调用订阅函数
+     * 如果变化的数值小于step的值，当多次累计变化的值大于等于step时，会调用订阅函数
      */
     clockFactor: number | ((this: Omit<SubscriberInfo, "listeners">, clockInterval: number) => number);
 }

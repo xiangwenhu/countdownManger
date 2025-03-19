@@ -1,10 +1,10 @@
 
-# CountManger
+# Counter
 计时管理器。   
 
 示例：
 ```typescript
-const cm = new CountManger();
+const cm = new Counter();
 const startTime = Date.now();
 
 const subscriber = cm.subScribe(function ({ value, isOver }) {
@@ -20,7 +20,7 @@ subscriber.startListening();
 ## 构造函数
 语法：  
 ```typescript
-const countManager = new CountManger(options?: ITimeClockOptions | ITimeClock);
+const counter = new Counter(options?: ITimeClockOptions | ITimeClock);
 ```
 
 **ITimeClockOptions**
@@ -41,7 +41,7 @@ interface ITimeClockOptions {
 ## 实例方法
 返回的实例，申明如下
 ```typescript
-class CountManger {
+class Counter {
     constructor(clock: ITimeClock | ITimeClockOptions);
     /**
      * 订阅
@@ -103,7 +103,9 @@ interface SubScribeOptions{
      */
     notifyOnSubscribe?: boolean;
     /**
-     * 时钟因子，默认值是时钟的interval值
+     * 时钟因子，即每次时钟执行的值变化的大小， 默认值等于时钟的interval
+     * 如果变化数值直大于等于step的值，会立即会调用订阅函数
+     * 如果变化的数值小于step的值，当多次累计变化的值大于等于step时，会调用订阅函数
      */
     clockFactor?: number | ((this: SubscriberInfo, clockInterval: number) => number);
 }

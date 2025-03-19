@@ -1,10 +1,10 @@
-import { countManager } from "..";
+import { counter } from "..";
 
 const startTime = Date.now();
 
 console.log(`${new Date().toJSON()}: 开始订阅`);
 
-const subScriber = countManager.subScribe(({ value, isOver }) => {
+const subScriber = counter.subScribe(({ value, isOver }) => {
     console.log(`${new Date().toJSON()}: value: ${value}`);
 
     if(isOver){

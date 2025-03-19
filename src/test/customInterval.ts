@@ -1,6 +1,6 @@
-import { CountManger } from "../"
+import { Counter } from "../"
 
-const cm = new CountManger({
+const cm = new Counter({
     interval: 100
 });
 

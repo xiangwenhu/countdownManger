@@ -1,8 +1,8 @@
 import { TimeClock } from "./TimeClock";
-import { CountManger } from "./CountManger";
+import { Counter } from "./Counter";
 
 const clock = new TimeClock();
-export const countManager = new CountManger(clock);
+export const counter = new Counter(clock);
 
 
 

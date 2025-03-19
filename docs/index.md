@@ -1,23 +1,23 @@
-## count-manger
+## clock-counter
 
 ## 核心 API
-* [CountManager](./CountManger.md)
+* [Counter](./Counter.md)
 * [TimeClock](./TimeClock.md) 
 
 ## 示例  
 
-### 使用默认时钟的CountManager
+### 使用默认时钟的 Counter
 
-内置了时钟间隔为 1000ms的 CountManager实例，可以直接导出并使用，如果不能满足需要，可以创建满足自己需要的实例。
+内置了时钟间隔为 1000ms的 Counter 实例，可以直接导出并使用，如果不能满足需要，可以创建满足自己需要的实例。
 
 ```typescript
-import { countManager } from "count-manger";
+import { counter } from "clock-counter";
 
 const startTime = Date.now();
 
 console.log(`${new Date().toJSON()}: 开始订阅`);
 
-const subScriber = countManager.subScribe(({ value, isOver }) => {
+const subScriber = counter.subScribe(({ value, isOver }) => {
     console.log(`${new Date().toJSON()}: value: ${value}`);
 
     if(isOver){
@@ -46,11 +46,11 @@ subScriber.startListening();
 ```
 
 
-### 使用自定义时钟的CountManager
+### 使用自定义时钟的Counter
 ```typescript
-import { CountManger } from "count-manger"
+import { Counter } from "clock-counter"
 
-const cm = new CountManger({
+const cm = new Counter({
     interval: 100
 });
 

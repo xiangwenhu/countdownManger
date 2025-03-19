@@ -7,14 +7,14 @@
 
 ## 安装
 ```cmd
-npm install count-manger
+npm install clock-counter
 ```
 
 ## 文档
 [API文档](./docs/index.md)
 
 ## 特点
-1. CountManager支持多实例，比如常见的验证码计时， 1000ms为间隔。
+1. clock-counter的 Counter 支持多实例，比如常见的验证码计时， 1000ms为间隔。
 2. 支持自定义时钟周期。
 3. 会根据当前时间和下一次预计时间点，通过setTimeout动态调整执行计划，确保计时尽可能准确。
 4. 支持倒计时，也支持正向计时。
@@ -32,13 +32,13 @@ https://xiangwenhu.github.io/count-manager-demos/#/
 
 ### 正常的倒计数
 ```typescript
-import { countManager } from "count-manger";
+import { counter } from "clock-counter";
 
 const startTime = Date.now();
 
 console.log(`${new Date().toJSON()}: 开始订阅`);
 
-const subScriber = countManager.subScribe(({ value, isOver }) => {
+const subScriber = counter.subScribe(({ value, isOver }) => {
     console.log(`${new Date().toJSON()}: value: ${value}`);
 
     if(isOver){
@@ -68,13 +68,13 @@ subScriber.startListening();
 
 ### 增长计数
 ```typescript
-import { countManager } from "count-manger";
+import { counter } from "clock-counter";
 
 const startTime = Date.now();
 
 console.log(`${new Date().toJSON()}: 开始订阅`);
 
-const subScriber = countManager.subScribe(({ value, isOver }) => {
+const subScriber = counter.subScribe(({ value, isOver }) => {
     console.log(`${new Date().toJSON()}: value: ${value}`);
 
     if(isOver){
@@ -105,11 +105,11 @@ subScriber.startListening();
 
 ### 同样的key
 ```typescript
-import { countManager } from "count-manger";
+import { counter } from "clock-counter";
 
 console.log(`subScriber1: ${new Date().toJSON()}: 开始订阅`);
 const startTime = Date.now();
-const subScriber1 = countManager.subScribe(function ({ value, isOver }) {
+const subScriber1 = counter.subScribe(function ({ value, isOver }) {
     console.log(`subScriber1: ${new Date().toJSON()}: value ${value}`)
 
     if (isOver) {
@@ -123,7 +123,7 @@ subScriber1.startListening();
 
 console.log(`client2: ${new Date().toJSON()}: 开始订阅`);
 setTimeout(() => {
-    let subScriber2 = countManager.subScribe(({ value, isOver }) => {
+    let subScriber2 = counter.subScribe(({ value, isOver }) => {
         console.log(`subScriber2: ${new Date().toJSON()}: value ${value}`)
     }, {
         start: 10 * 1000,
@@ -151,10 +151,10 @@ setTimeout(() => {
 ```
 ### 获取订阅信息
 ```typescript
-import { countManager } from "count-manger";
+import { counter } from "clock-counter";
 
 console.log(`subScriber1: ${new Date().toJSON()}: 开始订阅`);
-const subScriber1 = countManager.subScribe(function ({ value, isOver }) {
+const subScriber1 = counter.subScribe(function ({ value, isOver }) {
     console.log(`subScriber1: ${new Date().toJSON()}: value ${value}`)
 }, {
     start: 5 * 1000,
@@ -164,7 +164,7 @@ const subScriber1 = countManager.subScribe(function ({ value, isOver }) {
 
 console.log(`subScriber2: ${new Date().toJSON()}: 开始订阅`);
 
-let subScriber2 = countManager.subScribe(({ value, isOver }) => {
+let subScriber2 = counter.subScribe(({ value, isOver }) => {
     console.log(`subScriber2: ${new Date().toJSON()}: value ${value}`)
 }, {
     start: 10 * 1000,
@@ -173,7 +173,7 @@ let subScriber2 = countManager.subScribe(({ value, isOver }) => {
 
 console.log(`subScriber3: ${new Date().toJSON()}: 开始订阅`);
 
-let subScriber3 = countManager.subScribe(({ value, isOver }) => {
+let subScriber3 = counter.subScribe(({ value, isOver }) => {
     console.log(`subScriber2: ${new Date().toJSON()}: value ${value}`)
 }, {
     start: 10 * 1000,
@@ -223,15 +223,15 @@ let subScriber3 = countManager.subScribe(({ value, isOver }) => {
 
 ### 自定义时钟周期
 ```typescript
-import { CountManger } from "count-manger";
+import { Counter } from "clock-counter";
 
-const cm = new CountManger({
+const counter = new Counter({
     interval: 100
 });
 
 const startTime = Date.now();
 
-const subscriber = cm.subScribe(function ({ value, isOver }) {
+const subscriber = counter.subScribe(function ({ value, isOver }) {
     console.log(`${new Date().toJSON()}: ${value}`);
     if (isOver) {
         console.log(`${new Date().toJSON()}: cost:`, Date.now() - startTime);

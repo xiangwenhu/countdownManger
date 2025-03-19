@@ -1,6 +1,6 @@
 {
-  "name": "count-manger",
-  "version": "0.0.4",
+  "name": "clock-counter",
+  "version": "0.0.1001",
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
   "typing": "./dist/index.d.ts",
