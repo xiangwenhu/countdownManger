@@ -1,12 +1,29 @@
-## 构造函数
-语法：  
-```js
-const countManager = new CountManger(options);
+
+# CountManger
+计时管理器。   
+
+示例：
+```typescript
+const cm = new CountManger();
+const startTime = Date.now();
+
+const subscriber = cm.subScribe(function ({ value, isOver }) {
+    console.log(`${new Date().toJSON()}: ${value}`);
+    if (isOver) {
+        console.log(`${new Date().toJSON()}: cost:`, Date.now() - startTime);
+    }
+});
+
+subscriber.startListening();
 ```
 
-* options 可选 , 可以是 ITimeClock， 也可以是 ITimeClockOptions
+## 构造函数
+语法：  
+```typescript
+const countManager = new CountManger(options?: ITimeClockOptions | ITimeClock);
+```
 
-**ITimeClockOptions**  的类型申明如下
+**ITimeClockOptions**
 ```typescript
 interface ITimeClockOptions {
     /**
@@ -17,54 +34,8 @@ interface ITimeClockOptions {
 
 ```
 
-**ITimeClock** 的类型申明如下, 内置了实现接口的对象为 TimeClock, 一般情况传入ITimeClockOptions 即可满足需要，也可以传入自行实现的时钟。
-```typescript
-interface ITimeClock {
-    /**
-     * 定义
-     * @param fn
-     */
-    subscribe(fn: Listener): () => void;
-    /**
-     * 取消订阅
-     * @param fn 
-     */
-    unSubscribe(fn: Listener): any;
-    /**
-     * 开始计时
-     */
-    startTiming(): void;
-    /**
-     * 结束计时
-     */
-    stopTiming(): void;
-    /**
-     * 是否在计时
-     */
-    isTiming: boolean;
-    /**
-     * 始终选项
-     */
-    options: ITimeClockOptions;
-    /**
-     * 是否有监听函数
-     * @param listener 
-     * @returns 
-     */
-    hasListener: (listener: Listener) => boolean
-};
-
-type Listener = (data: {
-    /**
-     * 值
-     */
-    value: number;
-    /**
-     * 是否结束
-     */
-    isOver: boolean
-}) => void;
-```
+**ITimeClock**   
+内置了实现 `ITimeClock` 的对象为 [TimeClock](./TimeClock.md), 一般情况传入ITimeClockOptions 即可满足需要，也可以传入自行实现了 `ITimeClock` 的时钟。
 
 
 ## 实例方法
@@ -73,10 +44,16 @@ type Listener = (data: {
 class CountManger {
     constructor(clock: ITimeClock | ITimeClockOptions);
     /**
-     *清除结束的且选项未为自动清除的订阅
+     * 订阅
      */
     subScribe: (listener: Listener, subScribeOptions?: SubScribeOptions) => Readonly<SubScribeResult>;
+    /**
+     * 取消订阅
+     */
     unSubscribe: (fn: Function, key: string) => void;
+    /**
+     * 获取订阅信息
+     */
     getSubscribers: () => Readonly<SubscriberInfo>[];
 }
 
@@ -131,5 +108,47 @@ interface SubScribeOptions{
     clockFactor?: number | ((this: SubscriberInfo, clockInterval: number) => number);
 }
 
+
+interface SubScribeResult {
+    /**
+     * 取消订阅
+     */
+    unSubscribe: () => void;
+    /**
+     * 键
+     */
+    get key(): string;
+    /**
+     * 开始监听
+     */
+    startListening: (force?: boolean) => void;
+    /**
+     * 是否计时结束
+     */
+    get isOver(): boolean;
+    /**
+     * 是否启用了，即调用了 startListening
+     */
+    get enabled(): boolean;
+    /**
+     * 是否已经被取消订阅了
+     */
+    get isValid(): boolean;
+}
+
+interface SubscriberInfo extends SubScribeOptions {
+    /**
+     * 当前值
+     */
+    value: number;
+    /**
+     * 下一次的期待值
+     */
+    nextStepValue: number;
+    /**
+     * 是否已经启用
+     */
+    enabled: boolean;
+}
 
 ```

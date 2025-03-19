@@ -43,11 +43,11 @@ export interface ITimeClock {
     /**
      * 是否在计时
      */
-    isTiming: boolean;
+    get isTiming(): boolean;
     /**
      * 始终选项
      */
-    options: ITimeClockOptions;
+    get options(): ITimeClockOptions;
     /**
      * 是否有监听函数
      * @param listener 
@@ -57,35 +57,26 @@ export interface ITimeClock {
 }
 
 
-export interface SubscriberInfo {
+interface SubScribeFullOptions {
     /**
      * 起始值
      */
     start: number;
     /**
-     * 步距
-     */
-    step: number;
-    /**
      * 结束值
      */
     end: number;
     /**
-     * 当前值
+     * 步距
      */
-    value: number;
-    /**
-     * 下一次的期待值
-     */
-    nextStepValue: number;
-    /**
-     * 监听函数
-     */
-    listeners: Listener[];
+    step: number;
     /**
      * 计时完毕后是否自动取消订阅
      */
     autoUnsubscribe: boolean;
+    /**
+     * 键，键相同的订阅，同步更新
+     */
     key: string;
     /**
      * 名称，统计用
@@ -100,19 +91,33 @@ export interface SubscriberInfo {
      */
     notifyOnSubscribe: boolean;
     /**
+     * 时钟因子，默认是1000，即每次的值变更大小
+     */
+    clockFactor: number | ((this: Omit<SubscriberInfo, "listeners">, clockInterval: number) => number);
+}
+
+export type SubScribeOptions = Partial<SubScribeFullOptions>;
+
+export interface SubscriberInfo extends SubScribeFullOptions {
+    /**
+     * 当前值
+     */
+    value: number;
+    /**
+     * 下一次的期待值
+     */
+    nextStepValue: number;
+    /**
+     * 监听函数
+     */
+    listeners: Listener[];
+    /**
      * 是否已经启用
      */
     enabled: boolean;
-    /**
-     * 时钟因子，默认是1000，即每次的值变更大小
-     */
-    clockFactor: number | ((this: SubscriberInfo, clockInterval: number) => number);
 }
 
 
-export type SubScribeOptions = Partial<Pick<SubscriberInfo,
-    "start" | "end" | "step" | "autoUnsubscribe" | "key" | "name" | "isDecrease" | "notifyOnSubscribe" | "clockFactor">
->;
 
 
 export interface SubScribeResult {
@@ -123,7 +128,7 @@ export interface SubScribeResult {
     /**
      * 键
      */
-    key: string;
+    get key(): string;
     /**
      * 开始监听
      */
@@ -131,13 +136,13 @@ export interface SubScribeResult {
     /**
      * 是否计时结束
      */
-    isOver: boolean;
+    get isOver(): boolean;
     /**
      * 是否启用了，即调用了 startListening
      */
-    enabled: boolean;
+    get enabled(): boolean;
     /**
      * 是否已经被取消订阅了
      */
-    isValid: boolean;
+    get isValid(): boolean;
 }

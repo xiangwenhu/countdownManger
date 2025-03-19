@@ -10,10 +10,8 @@
 npm install count-manger
 ```
 
-## 演示地址
-https://xiangwenhu.github.io/count-manager-demos/#/
-
-
+## 文档
+[API文档](./docs/index.md)
 
 ## 特点
 1. CountManager支持多实例，比如常见的验证码计时， 1000ms为间隔。
@@ -21,7 +19,9 @@ https://xiangwenhu.github.io/count-manager-demos/#/
 3. 会根据当前时间和下一次预计时间点，通过setTimeout动态调整执行计划，确保计时尽可能准确。
 4. 支持倒计时，也支持正向计时。
 5. 支持统计运行中的计时器。
-   
+
+## 演示地址
+https://xiangwenhu.github.io/count-manager-demos/#/
    
 ## 结构图
 ![](https://github.com/xiangwenhu/countdownManger/blob/main/assets/images/strcut.png?raw=true)
@@ -32,7 +32,7 @@ https://xiangwenhu.github.io/count-manager-demos/#/
 
 ### 正常的倒计数
 ```typescript
-import { countManager } from "..";
+import { countManager } from "count-manger";
 
 const startTime = Date.now();
 
@@ -68,7 +68,7 @@ subScriber.startListening();
 
 ### 增长计数
 ```typescript
-import { countManager } from "..";
+import { countManager } from "count-manger";
 
 const startTime = Date.now();
 
@@ -105,7 +105,7 @@ subScriber.startListening();
 
 ### 同样的key
 ```typescript
-import { countManager } from "..";
+import { countManager } from "count-manger";
 
 console.log(`subScriber1: ${new Date().toJSON()}: 开始订阅`);
 const startTime = Date.now();
@@ -151,7 +151,7 @@ setTimeout(() => {
 ```
 ### 获取订阅信息
 ```typescript
-import { countManager } from "..";
+import { countManager } from "count-manger";
 
 console.log(`subScriber1: ${new Date().toJSON()}: 开始订阅`);
 const subScriber1 = countManager.subScribe(function ({ value, isOver }) {
@@ -223,7 +223,7 @@ let subScriber3 = countManager.subScribe(({ value, isOver }) => {
 
 ### 自定义时钟周期
 ```typescript
-import { CountManger } from "../"
+import { CountManger } from "count-manger";
 
 const cm = new CountManger({
     interval: 100
@@ -251,7 +251,6 @@ subscriber.startListening();
 // 2025-02-16T14:07:09.929Z: 100
 // 2025-02-16T14:07:10.036Z: 0
 // 2025-02-16T14:07:10.036Z: cost: 510
-
 
 ```
 

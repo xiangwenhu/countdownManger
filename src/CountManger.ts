@@ -51,7 +51,9 @@ export class CountManger {
             clockFactor = subscriber.clockFactor;
 
         if (typeof subscriber.clockFactor === "function") {
-            const factor = subscriber.clockFactor.call({ ...subscriber }, interval);
+            // 防止clockFactor调用修改引用值类型
+            const { listeners, ...context } = subscriber;
+            const factor = subscriber.clockFactor.call(context, interval);
             if (typeof factor === "number")
                 clockFactor = factor
         }
@@ -180,7 +182,9 @@ export class CountManger {
         const that = this;
         const result: SubScribeResult = {
             unSubscribe: () => this.unSubscribe(listener, key),
-            key,
+            get key() {
+                return key
+            },
             startListening: (force: boolean = false) => {
                 const subscriber = this.getSubscriber(key);
                 if (!subscriber) {

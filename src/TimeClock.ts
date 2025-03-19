@@ -10,7 +10,7 @@ export class TimeClock implements ITimeClock {
         this.listeners = [];
     }
 
-    get options() {
+    get options(): ITimeClockOptions {
         return {
             ...this.clockOptions
         }
@@ -24,7 +24,7 @@ export class TimeClock implements ITimeClock {
     /**
      * 是否在计时
      */
-    public isTiming: boolean = false;
+    private _isTiming: boolean = false;
 
     /**
      * 计时器id
@@ -55,6 +55,10 @@ export class TimeClock implements ITimeClock {
         this.listeners.push(fn);
     };
 
+    get isTiming() {
+        return this._isTiming;
+    }
+
     /**
      * 订阅
      * @param listener
@@ -71,12 +75,12 @@ export class TimeClock implements ITimeClock {
     unSubscribe = (listener: Listener) => {
         this.removeListener(listener);
         if (this.listeners.length === 0) {
-            this.isTiming = false;
+            this._isTiming = false;
             this.clearTimeout();
         }
     };
 
-    get now() {
+    private get now() {
         return performance.now();
     }
 
@@ -84,11 +88,11 @@ export class TimeClock implements ITimeClock {
      * 开始计时
      */
     startTiming = () => {
-        if (this.isTiming || this.listeners.length === 0) {
+        if (this._isTiming || this.listeners.length === 0) {
             return;
         }
         this.nextExecuteTime = this.now + this.options.interval;
-        this.isTiming = true;
+        this._isTiming = true;
         this.schedule();
     };
 
@@ -96,7 +100,7 @@ export class TimeClock implements ITimeClock {
      * 停止计时
      */
     stopTiming = () => {
-        this.isTiming = false;
+        this._isTiming = false;
         this.clearTimeout();
     };
 
@@ -104,7 +108,7 @@ export class TimeClock implements ITimeClock {
      * 通知
      */
     private notify = () => {
-        if (!this.isTiming) {
+        if (!this._isTiming) {
             return;
         }
 
@@ -134,7 +138,7 @@ export class TimeClock implements ITimeClock {
             this.clearTimeout();
             this.nextExecuteTime += interval;
             this.notify();
-            if (this.isTiming) {
+            if (this._isTiming) {
                 this.schedule();
             }
             return;
@@ -146,7 +150,7 @@ export class TimeClock implements ITimeClock {
             // console.log(`clock time:  ${new Date().toJSON()}`);
             this.nextExecuteTime += interval;
             this.notify();
-            if (this.isTiming) {
+            if (this._isTiming) {
                 this.schedule();
             }
         }, planWait);
@@ -160,7 +164,11 @@ export class TimeClock implements ITimeClock {
         this.ticket = undefined;
     };
 
-
+    /**
+     * 检查是否有某个监听者
+     * @param listener 
+     * @returns 
+     */
     hasListener = (listener: Listener) => {
         return this.listeners.includes(listener);
     }

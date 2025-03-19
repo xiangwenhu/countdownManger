@@ -1,3 +1,5 @@
+import { ITimeClock } from "./types";
+
 const hasOwnProperty = Object.prototype.hasOwnProperty
 
 export const noop = () => { };
@@ -18,7 +20,12 @@ export function hasown(obj: Object, prop: PropertyKey) {
 export function isTimeClock(obj: any) {
     if (!isObject(obj)) return false;
 
-    return isFunction(obj.subscribe) && isFunction(obj.unSubscribe)
-        && isFunction(obj.startTiming) && isFunction(obj.stopTiming)
-        && hasown(obj, "isTiming") && hasown(obj, "hasListener")
+    const clock: ITimeClock = obj as ITimeClock;
+
+    return (
+        isFunction(clock.subscribe) && isFunction(clock.unSubscribe)
+        && isFunction(clock.startTiming) && isFunction(clock.stopTiming)
+        && isFunction(clock.hasListener)
+        && ("isTiming" in clock) && ("options" in clock)
+    )
 }
