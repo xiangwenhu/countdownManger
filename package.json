@@ -1,6 +1,6 @@
 {
   "name": "clock-counter",
-  "version": "0.0.1001",
+  "version": "0.0.2",
   "main": "dist/index.js",
   "types": "./dist/index.d.ts",
   "typing": "./dist/index.d.ts",

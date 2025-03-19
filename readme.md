@@ -11,7 +11,7 @@ npm install clock-counter
 ```
 
 ## 文档
-[API文档](./docs/index.md)
+[API文档](https://github.com/xiangwenhu/counter-manager/blob/main/docs/index.md)
 
 ## 特点
 1. clock-counter的 Counter 支持多实例，比如常见的验证码计时， 1000ms为间隔。
